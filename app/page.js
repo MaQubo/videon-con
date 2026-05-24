@@ -1,88 +1,168 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 const TOPICS = [
-  { id: 1, text: "Aparece un auto rojo", category: "Objeto", difficulty: "Medio" },
-  { id: 2, text: "Alguien usa gafas oscuras", category: "Persona", difficulty: "Fácil" },
-  { id: 3, text: "Hay una escena en una playa", category: "Lugar", difficulty: "Fácil" },
-  { id: 4, text: "Alguien canta dentro de un auto", category: "Situación", difficulty: "Difícil" },
-  { id: 5, text: "Aparece una piscina", category: "Lugar", difficulty: "Medio" },
-  { id: 6, text: "Alguien rompe un objeto", category: "Acción", difficulty: "Medio" },
-  { id: 7, text: "Sale una motocicleta", category: "Objeto", difficulty: "Medio" },
-  { id: 8, text: "Hay fuego o llamas", category: "Visual", difficulty: "Difícil" },
-  { id: 9, text: "Alguien lleva una chaqueta de cuero", category: "Vestimenta", difficulty: "Medio" },
-  { id: 10, text: "Aparece una televisión dentro del videoclip", category: "Objeto", difficulty: "Difícil" },
-  { id: 11, text: "Hay una escena bajo la lluvia", category: "Clima", difficulty: "Medio" },
-  { id: 12, text: "Alguien mira por una ventana", category: "Acción", difficulty: "Medio" },
-  { id: 13, text: "Aparece una estatua", category: "Objeto", difficulty: "Difícil" },
-  { id: 14, text: "Hay humo o niebla artificial", category: "Visual", difficulty: "Medio" },
-  { id: 15, text: "Alguien usa sombrero", category: "Vestimenta", difficulty: "Medio" },
-  { id: 16, text: "Aparece un perro", category: "Animal", difficulty: "Difícil" },
-  { id: 17, text: "Hay una fiesta o discoteca", category: "Situación", difficulty: "Fácil" },
-  { id: 18, text: "Aparece dinero", category: "Objeto", difficulty: "Medio" },
-  { id: 19, text: "Alguien está llorando", category: "Emoción", difficulty: "Medio" },
-  { id: 20, text: "Se ve una escalera", category: "Objeto", difficulty: "Medio" },
-  { id: 21, text: "Aparece una cama", category: "Objeto", difficulty: "Fácil" },
-  { id: 22, text: "Alguien está sentado en el piso", category: "Acción", difficulty: "Medio" },
-  { id: 23, text: "Aparece un espejo", category: "Objeto", difficulty: "Medio" },
-  { id: 24, text: "Alguien usa guantes", category: "Vestimenta", difficulty: "Difícil" },
-  { id: 25, text: "Aparece una máscara", category: "Objeto", difficulty: "Difícil" },
-  { id: 26, text: "Hay una escena en un baño", category: "Lugar", difficulty: "Difícil" },
-  { id: 27, text: "Aparece una iglesia", category: "Lugar", difficulty: "Difícil" },
-  { id: 28, text: "Se ve una ciudad desde arriba", category: "Lugar", difficulty: "Medio" },
-  { id: 29, text: "Alguien corre por la calle", category: "Acción", difficulty: "Medio" },
-  { id: 30, text: "Aparece una bandera", category: "Objeto", difficulty: "Difícil" },
-  { id: 31, text: "Alguien usa ropa completamente blanca", category: "Vestimenta", difficulty: "Medio" },
-  { id: 32, text: "Alguien usa ropa completamente negra", category: "Vestimenta", difficulty: "Fácil" },
-  { id: 33, text: "Aparece una copa o vaso de alcohol", category: "Objeto", difficulty: "Medio" },
-  { id: 34, text: "Hay una escena en un hotel", category: "Lugar", difficulty: "Difícil" },
-  { id: 35, text: "Aparece una limusina", category: "Objeto", difficulty: "Difícil" },
-  { id: 36, text: "Alguien baila en grupo", category: "Acción", difficulty: "Fácil" },
-  { id: 37, text: "Aparece una puerta roja", category: "Objeto", difficulty: "Difícil" },
-  { id: 38, text: "Hay una escena en una azotea", category: "Lugar", difficulty: "Medio" },
-  { id: 39, text: "Alguien está dentro de una bañera", category: "Situación", difficulty: "Difícil" },
-  { id: 40, text: "Aparece una cancha deportiva", category: "Lugar", difficulty: "Difícil" },
-  { id: 41, text: "Hay luces de neón", category: "Visual", difficulty: "Medio" },
-  { id: 42, text: "Alguien está en una habitación roja", category: "Lugar", difficulty: "Difícil" },
-  { id: 43, text: "Aparece una bicicleta", category: "Objeto", difficulty: "Difícil" },
-  { id: 44, text: "Alguien usa una cadena o collar grande", category: "Vestimenta", difficulty: "Fácil" },
-  { id: 45, text: "Aparece un avión o aeropuerto", category: "Lugar", difficulty: "Difícil" },
-  { id: 46, text: "Alguien cae al suelo", category: "Acción", difficulty: "Difícil" },
-  { id: 47, text: "Aparece una cámara filmando dentro del video", category: "Meta", difficulty: "Difícil" },
-  { id: 48, text: "Hay una escena con velas", category: "Objeto", difficulty: "Medio" },
-  { id: 49, text: "Alguien toca un instrumento musical", category: "Acción", difficulty: "Fácil" },
-  { id: 50, text: "Aparece una serpiente o animal exótico", category: "Animal", difficulty: "Extremo" },
-  { id: 51, text: "Hay una escena en el desierto", category: "Lugar", difficulty: "Difícil" },
-  { id: 52, text: "Aparece una pantalla gigante", category: "Objeto", difficulty: "Medio" },
-  { id: 53, text: "Alguien está esposado", category: "Situación", difficulty: "Extremo" },
-  { id: 54, text: "Aparece un ascensor", category: "Lugar", difficulty: "Difícil" },
-  { id: 55, text: "Hay una pelea o discusión", category: "Situación", difficulty: "Medio" },
-  { id: 56, text: "Alguien tira algo al suelo", category: "Acción", difficulty: "Medio" },
-  { id: 57, text: "Aparece una corona", category: "Objeto", difficulty: "Difícil" },
-  { id: 58, text: "Hay una escena en blanco y negro", category: "Visual", difficulty: "Medio" },
-  { id: 59, text: "Alguien se mira en un espejo", category: "Acción", difficulty: "Medio" },
-  { id: 60, text: "Aparece una botella rota", category: "Objeto", difficulty: "Difícil" },
-  { id: 61, text: "Alguien está en una silla elegante", category: "Objeto", difficulty: "Medio" },
-  { id: 62, text: "Hay confeti o papeles cayendo", category: "Visual", difficulty: "Medio" },
-  { id: 63, text: "Aparece una rosa o flores", category: "Objeto", difficulty: "Medio" },
-  { id: 64, text: "Alguien usa lentes transparentes", category: "Vestimenta", difficulty: "Difícil" },
-  { id: 65, text: "Hay una escena en una carretera", category: "Lugar", difficulty: "Medio" },
-  { id: 66, text: "Aparece un taxi", category: "Objeto", difficulty: "Difícil" },
-  { id: 67, text: "Alguien está comiendo", category: "Acción", difficulty: "Difícil" },
-  { id: 68, text: "Aparece una maleta", category: "Objeto", difficulty: "Difícil" },
-  { id: 69, text: "Hay una escena con nieve", category: "Clima", difficulty: "Difícil" },
-  { id: 70, text: "Alguien usa una máscara de animal", category: "Vestimenta", difficulty: "Extremo" },
-  { id: 71, text: "Aparece un reloj grande", category: "Objeto", difficulty: "Difícil" },
-  { id: 72, text: "Hay una escena en una cocina", category: "Lugar", difficulty: "Difícil" },
-  { id: 73, text: "Alguien está en una jaula", category: "Situación", difficulty: "Extremo" },
-  { id: 74, text: "Aparece una silla de ruedas", category: "Objeto", difficulty: "Extremo" },
-  { id: 75, text: "Hay una persecución", category: "Situación", difficulty: "Difícil" },
-  { id: 76, text: "Alguien está en una piscina sin nadar", category: "Situación", difficulty: "Medio" },
-  { id: 77, text: "Aparece una pintura o cuadro", category: "Objeto", difficulty: "Difícil" },
-  { id: 78, text: "Hay una escena en una mansión", category: "Lugar", difficulty: "Medio" },
-  { id: 79, text: "Alguien usa botas llamativas", category: "Vestimenta", difficulty: "Difícil" },
-  { id: 80, text: "Aparece una luz roja dominante", category: "Visual", difficulty: "Medio" },
+  { id: 1, text: "aparezca un auto rojo", category: "Objeto", difficulty: "Medio" },
+  { id: 2, text: "alguien use gafas oscuras", category: "Vestimenta", difficulty: "Fácil" },
+  { id: 3, text: "haya una escena en una playa", category: "Lugar", difficulty: "Fácil" },
+  { id: 4, text: "alguien cante dentro de un auto", category: "Situación", difficulty: "Difícil" },
+  { id: 5, text: "aparezca una piscina", category: "Lugar", difficulty: "Medio" },
+  { id: 6, text: "alguien rompa un objeto", category: "Acción", difficulty: "Medio" },
+  { id: 7, text: "aparezca una motocicleta", category: "Objeto", difficulty: "Medio" },
+  { id: 8, text: "haya fuego o llamas", category: "Visual", difficulty: "Difícil" },
+  { id: 9, text: "alguien lleve una chaqueta de cuero", category: "Vestimenta", difficulty: "Medio" },
+  { id: 10, text: "aparezca una televisión dentro del videoclip", category: "Objeto", difficulty: "Difícil" },
+  { id: 11, text: "haya una escena bajo la lluvia", category: "Clima", difficulty: "Medio" },
+  { id: 12, text: "alguien mire por una ventana", category: "Acción", difficulty: "Medio" },
+  { id: 13, text: "aparezca una estatua", category: "Objeto", difficulty: "Difícil" },
+  { id: 14, text: "haya humo o niebla artificial", category: "Visual", difficulty: "Medio" },
+  { id: 15, text: "alguien use sombrero", category: "Vestimenta", difficulty: "Medio" },
+  { id: 16, text: "aparezca un perro", category: "Animal", difficulty: "Difícil" },
+  { id: 17, text: "haya una fiesta o discoteca", category: "Situación", difficulty: "Fácil" },
+  { id: 18, text: "aparezca dinero", category: "Objeto", difficulty: "Medio" },
+  { id: 19, text: "alguien esté llorando", category: "Emoción", difficulty: "Medio" },
+  { id: 20, text: "se vea una escalera", category: "Objeto", difficulty: "Medio" },
+  { id: 21, text: "aparezca una cama", category: "Objeto", difficulty: "Fácil" },
+  { id: 22, text: "alguien esté sentado en el piso", category: "Acción", difficulty: "Medio" },
+  { id: 23, text: "aparezca un espejo", category: "Objeto", difficulty: "Medio" },
+  { id: 24, text: "alguien use guantes", category: "Vestimenta", difficulty: "Difícil" },
+  { id: 25, text: "aparezca una máscara", category: "Objeto", difficulty: "Difícil" },
+  { id: 26, text: "haya una escena en un baño", category: "Lugar", difficulty: "Difícil" },
+  { id: 27, text: "aparezca una iglesia", category: "Lugar", difficulty: "Difícil" },
+  { id: 28, text: "se vea una ciudad desde arriba", category: "Lugar", difficulty: "Medio" },
+  { id: 29, text: "alguien corra por la calle", category: "Acción", difficulty: "Medio" },
+  { id: 30, text: "aparezca una bandera", category: "Objeto", difficulty: "Difícil" },
+  { id: 31, text: "alguien use ropa completamente blanca", category: "Vestimenta", difficulty: "Medio" },
+  { id: 32, text: "alguien use ropa completamente negra", category: "Vestimenta", difficulty: "Fácil" },
+  { id: 33, text: "aparezca una copa o vaso de alcohol", category: "Objeto", difficulty: "Medio" },
+  { id: 34, text: "haya una escena en un hotel", category: "Lugar", difficulty: "Difícil" },
+  { id: 35, text: "aparezca una limusina", category: "Objeto", difficulty: "Difícil" },
+  { id: 36, text: "alguien baile en grupo", category: "Acción", difficulty: "Fácil" },
+  { id: 37, text: "aparezca una puerta roja", category: "Objeto", difficulty: "Difícil" },
+  { id: 38, text: "haya una escena en una azotea", category: "Lugar", difficulty: "Medio" },
+  { id: 39, text: "alguien esté dentro de una bañera", category: "Situación", difficulty: "Difícil" },
+  { id: 40, text: "aparezca una cancha deportiva", category: "Lugar", difficulty: "Difícil" },
+  { id: 41, text: "haya luces de neón", category: "Visual", difficulty: "Medio" },
+  { id: 42, text: "alguien esté en una habitación roja", category: "Lugar", difficulty: "Difícil" },
+  { id: 43, text: "aparezca una bicicleta", category: "Objeto", difficulty: "Difícil" },
+  { id: 44, text: "alguien use una cadena o collar grande", category: "Vestimenta", difficulty: "Fácil" },
+  { id: 45, text: "aparezca un avión o aeropuerto", category: "Lugar", difficulty: "Difícil" },
+  { id: 46, text: "alguien caiga al suelo", category: "Acción", difficulty: "Difícil" },
+  { id: 47, text: "aparezca una cámara filmando dentro del video", category: "Meta", difficulty: "Difícil" },
+  { id: 48, text: "haya una escena con velas", category: "Objeto", difficulty: "Medio" },
+  { id: 49, text: "alguien toque un instrumento musical", category: "Acción", difficulty: "Fácil" },
+  { id: 50, text: "aparezca una serpiente o animal exótico", category: "Animal", difficulty: "Extremo" },
+  { id: 51, text: "haya una escena en el desierto", category: "Lugar", difficulty: "Difícil" },
+  { id: 52, text: "aparezca una pantalla gigante", category: "Objeto", difficulty: "Medio" },
+  { id: 53, text: "alguien esté esposado", category: "Situación", difficulty: "Extremo" },
+  { id: 54, text: "aparezca un ascensor", category: "Lugar", difficulty: "Difícil" },
+  { id: 55, text: "haya una pelea o discusión", category: "Situación", difficulty: "Medio" },
+  { id: 56, text: "alguien tire algo al suelo", category: "Acción", difficulty: "Medio" },
+  { id: 57, text: "aparezca una corona", category: "Objeto", difficulty: "Difícil" },
+  { id: 58, text: "haya una escena en blanco y negro", category: "Visual", difficulty: "Medio" },
+  { id: 59, text: "alguien se mire en un espejo", category: "Acción", difficulty: "Medio" },
+  { id: 60, text: "aparezca una botella rota", category: "Objeto", difficulty: "Difícil" },
+  { id: 61, text: "alguien esté sentado en una silla elegante", category: "Objeto", difficulty: "Medio" },
+  { id: 62, text: "haya confeti o papeles cayendo", category: "Visual", difficulty: "Medio" },
+  { id: 63, text: "aparezcan rosas o flores", category: "Objeto", difficulty: "Medio" },
+  { id: 64, text: "alguien use lentes transparentes", category: "Vestimenta", difficulty: "Difícil" },
+  { id: 65, text: "haya una escena en una carretera", category: "Lugar", difficulty: "Medio" },
+  { id: 66, text: "aparezca un taxi", category: "Objeto", difficulty: "Difícil" },
+  { id: 67, text: "alguien esté comiendo", category: "Acción", difficulty: "Difícil" },
+  { id: 68, text: "aparezca una maleta", category: "Objeto", difficulty: "Difícil" },
+  { id: 69, text: "haya una escena con nieve", category: "Clima", difficulty: "Difícil" },
+  { id: 70, text: "alguien use una máscara de animal", category: "Vestimenta", difficulty: "Extremo" },
+  { id: 71, text: "aparezca un reloj grande", category: "Objeto", difficulty: "Difícil" },
+  { id: 72, text: "haya una escena en una cocina", category: "Lugar", difficulty: "Difícil" },
+  { id: 73, text: "alguien esté dentro de una jaula", category: "Situación", difficulty: "Extremo" },
+  { id: 74, text: "aparezca una silla de ruedas", category: "Objeto", difficulty: "Extremo" },
+  { id: 75, text: "haya una persecución", category: "Situación", difficulty: "Difícil" },
+  { id: 76, text: "alguien esté en una piscina sin nadar", category: "Situación", difficulty: "Medio" },
+  { id: 77, text: "aparezca una pintura o cuadro", category: "Objeto", difficulty: "Difícil" },
+  { id: 78, text: "haya una escena en una mansión", category: "Lugar", difficulty: "Medio" },
+  { id: 79, text: "alguien use botas llamativas", category: "Vestimenta", difficulty: "Difícil" },
+  { id: 80, text: "haya una luz roja dominante", category: "Visual", difficulty: "Medio" },
+  { id: 81, text: "aparezca una mesa llena de comida", category: "Objeto", difficulty: "Medio" },
+  { id: 82, text: "alguien esté manejando de noche", category: "Situación", difficulty: "Medio" },
+  { id: 83, text: "aparezca una guitarra eléctrica", category: "Objeto", difficulty: "Medio" },
+  { id: 84, text: "alguien esté en una cama sin dormir", category: "Situación", difficulty: "Medio" },
+  { id: 85, text: "aparezca una casa abandonada", category: "Lugar", difficulty: "Difícil" },
+  { id: 86, text: "haya una escena con muchas personas bailando", category: "Acción", difficulty: "Fácil" },
+  { id: 87, text: "aparezca una habitación completamente blanca", category: "Lugar", difficulty: "Medio" },
+  { id: 88, text: "aparezca una habitación completamente oscura", category: "Lugar", difficulty: "Medio" },
+  { id: 89, text: "alguien use maquillaje muy llamativo", category: "Vestimenta", difficulty: "Medio" },
+  { id: 90, text: "aparezca un micrófono de pie", category: "Objeto", difficulty: "Fácil" },
+  { id: 91, text: "haya una escena en un escenario", category: "Lugar", difficulty: "Fácil" },
+  { id: 92, text: "aparezca público o audiencia", category: "Personas", difficulty: "Fácil" },
+  { id: 93, text: "alguien esté en un sofá", category: "Situación", difficulty: "Medio" },
+  { id: 94, text: "aparezca una lámpara encendida", category: "Objeto", difficulty: "Medio" },
+  { id: 95, text: "alguien esté usando audífonos", category: "Objeto", difficulty: "Medio" },
+  { id: 96, text: "haya una escena dentro de un club nocturno", category: "Lugar", difficulty: "Fácil" },
+  { id: 97, text: "alguien esté caminando solo por la calle", category: "Acción", difficulty: "Medio" },
+  { id: 98, text: "aparezca una señal de tránsito", category: "Objeto", difficulty: "Difícil" },
+  { id: 99, text: "aparezca una pared con grafiti", category: "Lugar", difficulty: "Medio" },
+  { id: 100, text: "alguien use una gorra", category: "Vestimenta", difficulty: "Fácil" },
+  { id: 101, text: "aparezca un puente", category: "Lugar", difficulty: "Difícil" },
+  { id: 102, text: "haya una escena en un tren o estación de tren", category: "Lugar", difficulty: "Difícil" },
+  { id: 103, text: "aparezca un barco o yate", category: "Objeto", difficulty: "Difícil" },
+  { id: 104, text: "alguien esté saltando", category: "Acción", difficulty: "Medio" },
+  { id: 105, text: "aparezca una persona con paraguas", category: "Objeto", difficulty: "Difícil" },
+  { id: 106, text: "haya una escena con relámpagos o tormenta", category: "Clima", difficulty: "Difícil" },
+  { id: 107, text: "aparezca una fogata", category: "Visual", difficulty: "Difícil" },
+  { id: 108, text: "alguien esté pintando o dibujando", category: "Acción", difficulty: "Extremo" },
+  { id: 109, text: "aparezca un teléfono antiguo", category: "Objeto", difficulty: "Extremo" },
+  { id: 110, text: "alguien esté usando un teléfono celular", category: "Objeto", difficulty: "Fácil" },
+  { id: 111, text: "haya una escena en una escuela o salón de clases", category: "Lugar", difficulty: "Difícil" },
+  { id: 112, text: "aparezca una biblioteca o estantería de libros", category: "Lugar", difficulty: "Difícil" },
+  { id: 113, text: "alguien esté fumando", category: "Acción", difficulty: "Medio" },
+  { id: 114, text: "aparezca una mesa de billar", category: "Objeto", difficulty: "Difícil" },
+  { id: 115, text: "haya una escena con luces parpadeantes", category: "Visual", difficulty: "Medio" },
+  { id: 116, text: "alguien esté usando traje formal", category: "Vestimenta", difficulty: "Medio" },
+  { id: 117, text: "alguien use vestido rojo", category: "Vestimenta", difficulty: "Difícil" },
+  { id: 118, text: "aparezca una ventana rota", category: "Objeto", difficulty: "Difícil" },
+  { id: 119, text: "haya una escena dentro de un supermercado o tienda", category: "Lugar", difficulty: "Extremo" },
+  { id: 120, text: "aparezca un maniquí", category: "Objeto", difficulty: "Extremo" },
+  { id: 121, text: "alguien esté acostado en el suelo", category: "Situación", difficulty: "Difícil" },
+  { id: 122, text: "aparezca una escalera mecánica", category: "Objeto", difficulty: "Extremo" },
+  { id: 123, text: "haya una escena en un túnel", category: "Lugar", difficulty: "Difícil" },
+  { id: 124, text: "aparezca una motocicleta en movimiento", category: "Objeto", difficulty: "Medio" },
+  { id: 125, text: "alguien esté rodeado de muchas luces", category: "Visual", difficulty: "Medio" },
+  { id: 126, text: "aparezca un piano", category: "Objeto", difficulty: "Medio" },
+  { id: 127, text: "alguien toque batería", category: "Acción", difficulty: "Medio" },
+  { id: 128, text: "aparezca una piscina vacía", category: "Lugar", difficulty: "Extremo" },
+  { id: 129, text: "haya una escena en cámara lenta muy evidente", category: "Visual", difficulty: "Medio" },
+  { id: 130, text: "aparezca una persona con el pelo teñido de color llamativo", category: "Persona", difficulty: "Medio" },
+  { id: 131, text: "alguien esté usando uniforme", category: "Vestimenta", difficulty: "Difícil" },
+  { id: 132, text: "aparezca una ambulancia, patrulla o vehículo de emergencia", category: "Objeto", difficulty: "Extremo" },
+  { id: 133, text: "haya una escena en un hospital", category: "Lugar", difficulty: "Extremo" },
+  { id: 134, text: "aparezca una tumba o cementerio", category: "Lugar", difficulty: "Extremo" },
+  { id: 135, text: "alguien esté rezando", category: "Acción", difficulty: "Difícil" },
+  { id: 136, text: "aparezca una cruz religiosa", category: "Objeto", difficulty: "Difícil" },
+  { id: 137, text: "haya una escena en un restaurante", category: "Lugar", difficulty: "Difícil" },
+  { id: 138, text: "aparezca una hamburguesa, pizza u otra comida reconocible", category: "Objeto", difficulty: "Difícil" },
+  { id: 139, text: "alguien esté brindando con otra persona", category: "Acción", difficulty: "Medio" },
+  { id: 140, text: "aparezca un espejo con luces alrededor", category: "Objeto", difficulty: "Difícil" },
+  { id: 141, text: "haya una escena en un camerino", category: "Lugar", difficulty: "Extremo" },
+  { id: 142, text: "aparezca una persona maquillándose", category: "Acción", difficulty: "Difícil" },
+  { id: 143, text: "alguien esté usando una peluca", category: "Vestimenta", difficulty: "Difícil" },
+  { id: 144, text: "aparezca un globo o varios globos", category: "Objeto", difficulty: "Difícil" },
+  { id: 145, text: "haya una escena con agua salpicando", category: "Visual", difficulty: "Medio" },
+  { id: 146, text: "alguien esté nadando", category: "Acción", difficulty: "Difícil" },
+  { id: 147, text: "aparezca una cascada o fuente de agua", category: "Lugar", difficulty: "Difícil" },
+  { id: 148, text: "haya una escena en un parque", category: "Lugar", difficulty: "Medio" },
+  { id: 149, text: "aparezca una rueda de la fortuna o feria", category: "Lugar", difficulty: "Extremo" },
+  { id: 150, text: "alguien esté montando a caballo", category: "Acción", difficulty: "Extremo" },
+  { id: 151, text: "aparezca un caballo", category: "Animal", difficulty: "Difícil" },
+  { id: 152, text: "aparezca una persona con alas o disfraz fantástico", category: "Vestimenta", difficulty: "Extremo" },
+  { id: 153, text: "haya una escena con explosión visual o pirotecnia", category: "Visual", difficulty: "Difícil" },
+  { id: 154, text: "aparezca un auto de lujo", category: "Objeto", difficulty: "Medio" },
+  { id: 155, text: "alguien esté cantando frente a un espejo", category: "Situación", difficulty: "Difícil" },
+  { id: 156, text: "aparezca una calle mojada", category: "Lugar", difficulty: "Medio" },
+  { id: 157, text: "haya una escena con sombra muy marcada", category: "Visual", difficulty: "Medio" },
+  { id: 158, text: "aparezca una persona detrás de una reja", category: "Situación", difficulty: "Difícil" },
+  { id: 159, text: "alguien esté usando una bufanda", category: "Vestimenta", difficulty: "Extremo" },
+  { id: 160, text: "aparezca una escena con muchas pantallas o monitores", category: "Objeto", difficulty: "Difícil" }
 ];
 
 function getRandomTopic(usedIds) {
@@ -107,27 +187,11 @@ export default function Home() {
   const [usedTopics, setUsedTopics] = useState([]);
   const [history, setHistory] = useState([]);
   const [round, setRound] = useState(1);
-  const [timerEnabled, setTimerEnabled] = useState(true);
-  const [seconds, setSeconds] = useState(60);
-  const [timeLeft, setTimeLeft] = useState(60);
 
   const alivePlayers = useMemo(() => players.filter((p) => p.alive), [players]);
   const eliminatedPlayers = useMemo(() => players.filter((p) => !p.alive), [players]);
   const currentPlayer = players[turn];
   const winner = alivePlayers.length === 1 && screen === "game" ? alivePlayers[0] : null;
-
-  useEffect(() => {
-    if (screen !== "game" || winner || !timerEnabled) return;
-
-    const interval = setInterval(() => {
-      setTimeLeft((current) => {
-        if (current <= 1) return 0;
-        return current - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [screen, winner, timerEnabled, turn, topic]);
 
   function addPlayer() {
     if (names.length >= 10) return;
@@ -162,7 +226,25 @@ export default function Home() {
     setUsedTopics([firstTopic.id]);
     setHistory([]);
     setRound(1);
-    setTimeLeft(seconds);
+    setScreen("game");
+  }
+
+  function playAgainSamePlayers() {
+    const renewedPlayers = players.map((player, index) => ({
+      ...player,
+      id: index + 1,
+      alive: true,
+      eliminatedAt: null,
+    }));
+
+    const firstTopic = getRandomTopic([]);
+
+    setPlayers(renewedPlayers);
+    setTurn(0);
+    setTopic(firstTopic);
+    setUsedTopics([firstTopic.id]);
+    setHistory([]);
+    setRound(1);
     setScreen("game");
   }
 
@@ -177,9 +259,9 @@ export default function Home() {
   function changeTopic() {
     const next = getRandomTopic(usedTopics);
     const alreadyUsed = usedTopics.includes(next.id);
+
     setTopic(next);
     setUsedTopics(alreadyUsed ? [next.id] : [...usedTopics, next.id]);
-    setTimeLeft(seconds);
   }
 
   function markSuccess() {
@@ -189,13 +271,12 @@ export default function Home() {
       {
         type: "success",
         text: `${currentPlayer.name} cumplió`,
-        detail: topic?.text,
+        detail: `Videos con... ${topic?.text}`,
       },
       ...history,
     ].slice(0, 6));
 
     setTurn(nextAliveIndex(players, turn));
-    setTimeLeft(seconds);
   }
 
   function markFail() {
@@ -221,15 +302,12 @@ export default function Home() {
       {
         type: "fail",
         text: `${currentPlayer.name} quedó eliminado`,
-        detail: topic?.text,
+        detail: `Videos con... ${topic?.text}`,
       },
       ...history,
     ].slice(0, 6));
 
-    if (aliveAfter.length <= 1) {
-      setTimeLeft(seconds);
-      return;
-    }
+    if (aliveAfter.length <= 1) return;
 
     const nextTopic = getRandomTopic(usedTopics);
     const alreadyUsed = usedTopics.includes(nextTopic.id);
@@ -238,7 +316,6 @@ export default function Home() {
     setUsedTopics(alreadyUsed ? [nextTopic.id] : [...usedTopics, nextTopic.id]);
     setTurn(nextAliveIndex(updated, turn));
     setRound(round + 1);
-    setTimeLeft(seconds);
   }
 
   function resetGame() {
@@ -249,14 +326,7 @@ export default function Home() {
     setUsedTopics([]);
     setHistory([]);
     setRound(1);
-    setTimeLeft(seconds);
   }
-
-  function quickAddNames() {
-    setNames(["Ana", "Bruno", "Carla", "Diego", "Elena"]);
-  }
-
-  const timerPercent = Math.max(0, Math.min(100, (timeLeft / seconds) * 100));
 
   return (
     <main className="app">
@@ -273,7 +343,7 @@ export default function Home() {
               <span> CON...</span>
             </h1>
             <p>
-              Sortea una consigna visual, busca un videoclip oficial en YouTube y elimina a quien no logre encontrar un video que cumpla.
+              Sortea una consigna visual, busca un videoclip musical oficial y elimina a quien no logre encontrar un video que cumpla.
             </p>
 
             <div className="heroStats">
@@ -283,7 +353,7 @@ export default function Home() {
               </div>
               <div>
                 <strong>{TOPICS.length}</strong>
-                <span>tópicos base</span>
+                <span>tópicos</span>
               </div>
               <div>
                 <strong>1</strong>
@@ -321,41 +391,7 @@ export default function Home() {
               <button className="secondaryButton" onClick={addPlayer} disabled={names.length >= 10}>
                 + Agregar jugador
               </button>
-              <button className="ghostButton" onClick={quickAddNames}>
-                Usar ejemplo
-              </button>
             </div>
-
-            <div className="settingsBox">
-              <div>
-                <strong>Temporizador</strong>
-                <span>Opcional para darle presión al turno.</span>
-              </div>
-
-              <button
-                className={timerEnabled ? "toggle active" : "toggle"}
-                onClick={() => setTimerEnabled(!timerEnabled)}
-              >
-                {timerEnabled ? "Activo" : "Apagado"}
-              </button>
-            </div>
-
-            {timerEnabled && (
-              <div className="timeOptions">
-                {[45, 60, 90].map((option) => (
-                  <button
-                    key={option}
-                    className={seconds === option ? "timeOption selected" : "timeOption"}
-                    onClick={() => {
-                      setSeconds(option);
-                      setTimeLeft(option);
-                    }}
-                  >
-                    {option}s
-                  </button>
-                ))}
-              </div>
-            )}
 
             <button className="startButton" onClick={startGame}>
               Empezar partida
@@ -381,7 +417,7 @@ export default function Home() {
                 <span>Eliminados</span>
                 <strong>{eliminatedPlayers.length}</strong>
               </div>
-              <button onClick={resetGame}>Reiniciar</button>
+              <button onClick={resetGame}>Cambiar jugadores</button>
             </div>
           </header>
 
@@ -392,20 +428,7 @@ export default function Home() {
                   <span className="eyebrow">Turno actual</span>
                   <h1>{currentPlayer?.name}</h1>
                 </div>
-
-                {timerEnabled && (
-                  <div className={timeLeft <= 10 ? "timer danger" : "timer"}>
-                    <span>{timeLeft}</span>
-                    <small>seg</small>
-                  </div>
-                )}
               </div>
-
-              {timerEnabled && (
-                <div className="timerBar">
-                  <div style={{ width: `${timerPercent}%` }} />
-                </div>
-              )}
 
               <div className="topicCard">
                 <div className="topicMeta">
@@ -413,7 +436,7 @@ export default function Home() {
                   <span className={getDifficultyClass(topic.difficulty)}>{topic.difficulty}</span>
                 </div>
 
-                <div className="topicPrefix">Busca un videoclip donde...</div>
+                <div className="topicPrefix">Busca un video musical oficial donde...</div>
                 <h2>{topic.text}</h2>
               </div>
 
@@ -495,7 +518,10 @@ export default function Home() {
               ))}
             </div>
 
-            <button onClick={resetGame}>Nueva partida</button>
+            <div className="winnerActions">
+              <button onClick={playAgainSamePlayers}>Jugar otra con los mismos</button>
+              <button className="secondaryWinnerButton" onClick={resetGame}>Cambiar participantes</button>
+            </div>
           </div>
         </section>
       )}
@@ -738,13 +764,12 @@ export default function Home() {
 
         .setupControls {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: 1fr;
           gap: 12px;
           margin: 18px 0;
         }
 
         .secondaryButton,
-        .ghostButton,
         .startButton,
         .topStats button,
         .winnerCard button {
@@ -757,7 +782,6 @@ export default function Home() {
         }
 
         .secondaryButton:hover,
-        .ghostButton:hover,
         .startButton:hover,
         .topStats button:hover,
         .winnerCard button:hover,
@@ -768,67 +792,6 @@ export default function Home() {
 
         .secondaryButton {
           background: rgba(255,255,255,0.12);
-        }
-
-        .ghostButton {
-          background: rgba(124,58,237,0.28);
-        }
-
-        .settingsBox {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 16px;
-          border-radius: 22px;
-          padding: 18px;
-          background: rgba(255,255,255,0.08);
-          margin-top: 18px;
-        }
-
-        .settingsBox strong {
-          display: block;
-          font-size: 17px;
-        }
-
-        .settingsBox span {
-          display: block;
-          color: #94a3b8;
-          font-size: 14px;
-          margin-top: 4px;
-        }
-
-        .toggle {
-          border: none;
-          color: white;
-          border-radius: 999px;
-          padding: 11px 16px;
-          background: rgba(255,255,255,0.12);
-          font-weight: 1000;
-        }
-
-        .toggle.active {
-          background: #22c55e;
-        }
-
-        .timeOptions {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 10px;
-          margin-top: 12px;
-        }
-
-        .timeOption {
-          border: 1px solid rgba(255,255,255,0.12);
-          color: white;
-          border-radius: 16px;
-          padding: 13px;
-          background: rgba(255,255,255,0.08);
-          font-weight: 1000;
-        }
-
-        .timeOption.selected {
-          background: #7c3aed;
-          border-color: #a78bfa;
         }
 
         .startButton {
@@ -905,54 +868,10 @@ export default function Home() {
         }
 
         .turnCard h1 {
-          margin: 12px 0 0;
+          margin: 12px 0 24px;
           font-size: clamp(52px, 7vw, 92px);
           line-height: 0.9;
           letter-spacing: -4px;
-        }
-
-        .timer {
-          width: 120px;
-          height: 120px;
-          border-radius: 32px;
-          display: grid;
-          place-items: center;
-          background: linear-gradient(135deg, #22c55e, #14b8a6);
-          box-shadow: 0 18px 48px rgba(34,197,94,0.28);
-        }
-
-        .timer.danger {
-          background: linear-gradient(135deg, #ef4444, #f97316);
-          animation: pulse 0.8s infinite alternate;
-        }
-
-        .timer span {
-          display: block;
-          font-size: 48px;
-          line-height: 0.8;
-          font-weight: 1000;
-        }
-
-        .timer small {
-          display: block;
-          text-align: center;
-          font-weight: 1000;
-          text-transform: uppercase;
-        }
-
-        .timerBar {
-          height: 12px;
-          border-radius: 999px;
-          overflow: hidden;
-          background: rgba(255,255,255,0.1);
-          margin: 22px 0;
-        }
-
-        .timerBar div {
-          height: 100%;
-          border-radius: inherit;
-          background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
-          transition: width 0.25s linear;
         }
 
         .topicCard {
@@ -1200,20 +1119,25 @@ export default function Home() {
           opacity: 0.55;
         }
 
+        .winnerActions {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 14px;
+          margin-top: 20px;
+        }
+
         .winnerCard button {
+          border: none;
+          border-radius: 18px;
+          color: white;
+          font-weight: 1000;
           background: linear-gradient(135deg, #7c3aed, #ec4899);
           font-size: 18px;
           padding: 18px 28px;
         }
 
-        @keyframes pulse {
-          from {
-            transform: scale(1);
-          }
-
-          to {
-            transform: scale(1.04);
-          }
+        .secondaryWinnerButton {
+          background: rgba(255,255,255,0.12) !important;
         }
 
         @media (max-width: 980px) {
@@ -1244,14 +1168,10 @@ export default function Home() {
 
           .topStats,
           .actionGrid,
-          .setupControls {
+          .setupControls,
+          .winnerActions {
             grid-template-columns: 1fr;
             display: grid;
-          }
-
-          .timer {
-            width: 100%;
-            height: 96px;
           }
         }
       `}</style>
